@@ -15,7 +15,7 @@ namespace WhoIsBigger.Scripts.View
             statisticsText.text = $"Friendly: {gameModel.FriendlyUnitsCount}" +
                                   $"\nEnemies: {gameModel.EnemyUnitsCount}" +
                                   $"\nDead Friendlies: {gameModel.FriendlyUnitsDead}" +
-                                  $"\nDead Enemies boba: {gameModel.EnemyUnitsDead}";
+                                  $"\nDead Enemies: {gameModel.EnemyUnitsDead}";
         }
     }
 }

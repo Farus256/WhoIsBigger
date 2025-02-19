@@ -9,7 +9,6 @@ namespace WhoIsBigger.Scripts.Installer
         public override void InstallBindings()
         {
             Container.Bind<IGameModel>().To<GameModel>().AsSingle();
-            
         }    
     }
 }

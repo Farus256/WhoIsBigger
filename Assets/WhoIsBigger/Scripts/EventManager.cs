@@ -8,6 +8,7 @@ namespace WhoIsBigger.Scripts
     
     public class EventManager : MonoBehaviour
     {
+        // Ивент спавна юнита
         public UnitSpawnedEvent OnUnitSpawned = new UnitSpawnedEvent();
     }
 }
