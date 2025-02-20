@@ -4,19 +4,22 @@ using UnityEngine;
 using ProjectDawn.Navigation.Hybrid;
 using Unity.VisualScripting;
 using UnityEditor;
+using WhoIsBigger.Scripts.Controllers.Capsule;
 using Zenject;
 
 namespace WhoIsBigger.Scripts.View
 {
-    public class FriendlyCapsuleController : MonoBehaviour
+    public class CapsuleController : MonoBehaviour
     {
         private AgentAuthoring _agent;
+        private CapsuleType _capsuleType;
+        private string _tagToChase;
         
-
-        [Inject]
-        public void Construct(Vector3 transform)
+        public void Construct(CapsuleType type, Vector3 transform)
         {
+            Debug.Log(type + "postavlen");
             gameObject.transform.position = transform;
+            _capsuleType = type;
         }
         
         private void Awake()
@@ -26,13 +29,28 @@ namespace WhoIsBigger.Scripts.View
             {
                 Debug.LogError("No agent found");
             }
-            
-           
-            
         }
 
         private void Start()
         {
+            if (_capsuleType == CapsuleType.Friendly)
+            {
+                _tagToChase = CapsuleTag.Enemy;
+            }
+            else
+            {
+                _tagToChase = CapsuleTag.Friendly;
+            }
+            Debug.Log("догоняю" + _tagToChase);
+        }
+        
+        private void Update()
+        {
+            if (_agent.IsUnityNull())
+            {
+                return;
+            }
+            
             var enemy = FindNearestEnemy();
             if (enemy != null)
             {
@@ -42,16 +60,16 @@ namespace WhoIsBigger.Scripts.View
 
         private GameObject FindNearestEnemy()
         {
-            var enemies = GameObject.FindGameObjectsWithTag("EnemyCapsule");
+            var enemies = GameObject.FindGameObjectsWithTag(_tagToChase);
             if(enemies.Length == 0){return null;}
             
             return enemies.OrderBy(e => Vector3.Distance(transform.position, e.transform.position)).First();
         }
 
-        private void OnCollisionEnter(Collision  collision)
+        public void OnCollisionEnter(Collision  collision)
         {
             Debug.Log("OnCollisionEnter");
-            if (collision.gameObject.CompareTag("EnemyCapsule"))
+            if (collision.gameObject.CompareTag(_tagToChase))
             {
                 Destroy(collision.gameObject);
                 Destroy(gameObject);
