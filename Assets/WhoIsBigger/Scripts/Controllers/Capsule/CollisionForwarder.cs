@@ -6,14 +6,14 @@ namespace WhoIsBigger.Scripts.View
     public class CollisionForwarder : MonoBehaviour
     {
         private CapsuleController _controller;
-        private void Awake()
+        private void Start()
         {
             _controller = GetComponentInParent<CapsuleController>();
         }
 
-        private void OnCollisionEnter (Collision collision)
+        private void OnTriggerEnter (Collider other)
         {
-            _controller.HandleFight(collision);
+            _controller.HandleFight(other);
         }
     }
 }

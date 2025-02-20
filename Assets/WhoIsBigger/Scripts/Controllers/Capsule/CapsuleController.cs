@@ -12,6 +12,7 @@ namespace WhoIsBigger.Scripts.View
 {
     public class CapsuleController : MonoBehaviour
     {
+        [Inject] private EventManager _eventManager;
         private AgentAuthoring _agent;
         private CapsuleType _capsuleType;
         private string _tagToChase;
@@ -54,7 +55,6 @@ namespace WhoIsBigger.Scripts.View
 
         private void OnDestroy()
         {
-            // Удаляем капсулу из реестра, когда она отключается
             if (_capsuleType == CapsuleType.Friendly)
                 CapsuleRegistry.FriendlyCapsules.Remove(this);
             else if (_capsuleType == CapsuleType.Enemy)
@@ -92,13 +92,14 @@ namespace WhoIsBigger.Scripts.View
             return nearest.gameObject;
         }
 
-        public void HandleFight(Collision collision)
+        public void HandleFight(Collider other)
         {
             Debug.Log("OnCollisionEnter");
-            if (collision.gameObject.CompareTag(_tagToChase))
+            if (other.gameObject.CompareTag(_tagToChase))
             {
-                Destroy(collision.gameObject);
+                Destroy(other.gameObject);
                 Destroy(gameObject);
+                _eventManager.OnUnitDied.Invoke(_capsuleType);
             }
         }
     }

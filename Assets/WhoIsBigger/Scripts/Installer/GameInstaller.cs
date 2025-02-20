@@ -25,13 +25,13 @@ namespace WhoIsBigger.Scripts.Installer
             Container.BindInstance(friendlyCapsulePrefab).WithId("FriendlyCapsulePrefab").AsTransient();
             Container.BindInstance(enemyCapsulePrefab).WithId("EnemyCapsulePrefab").AsTransient();
 
-
             Container.BindFactory<CapsuleType, Vector3, CapsuleController, CapsuleFactory>().AsSingle();
+
+            Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
 
             //Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
 
             //Container.Bind<GameObject>().WithId("EnemyCapsulePrefab").FromInstance(enemyCapsulePrefab);
-
         }
     }
 }

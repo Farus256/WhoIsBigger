@@ -9,6 +9,8 @@ namespace WhoIsBigger.Scripts.Presenter
         private readonly DiContainer _container;
         private readonly GameObject _friendlyCapsulePrefab;
         private readonly GameObject _enemyCapsulePrefab;
+        
+        [Inject] private EventManager _eventManager;
         public CapsuleFactory(
             DiContainer container, 
             [Inject(Id = "FriendlyCapsulePrefab")] GameObject friendlyCapsulePrefab, 
@@ -19,10 +21,10 @@ namespace WhoIsBigger.Scripts.Presenter
             _enemyCapsulePrefab = enemyCapsulePrefab;
         }
             
-        public override CapsuleController Create(CapsuleType type, Vector3 pos)
+        public override CapsuleController Create(CapsuleType capsuleType, Vector3 pos)
         {
             GameObject prefabToInstance = null;
-            switch (type)
+            switch (capsuleType)
             {
                 case CapsuleType.Enemy:
                     prefabToInstance = _enemyCapsulePrefab;
@@ -31,7 +33,7 @@ namespace WhoIsBigger.Scripts.Presenter
                     prefabToInstance = _friendlyCapsulePrefab;
                     break;
                 default:
-                    Debug.LogError($"Unknown capsule type: {type}");
+                    Debug.LogError($"Unknown capsule type: {capsuleType}");
                     return null;
             }
             
@@ -45,7 +47,9 @@ namespace WhoIsBigger.Scripts.Presenter
             }
             
             _container.Inject(controller);
-            controller.Construct(type,pos);
+            controller.Construct(capsuleType,pos);
+            
+            _eventManager.OnUnitSpawned.Invoke(capsuleType);
             
             return instance.GetComponent<CapsuleController>();
         }

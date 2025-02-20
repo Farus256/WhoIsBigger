@@ -7,7 +7,6 @@ namespace WhoIsBigger.Scripts.View
 {
     public class ClickController : MonoBehaviour
     {
-        [Inject] private EventManager _gameEvents;
         [Inject] private CapsuleFactory _capsuleFactory;
         private void Update()
         {
@@ -31,7 +30,6 @@ namespace WhoIsBigger.Scripts.View
 
             Debug.Log("программа поставила" + capsuleType);
             _capsuleFactory.Create(capsuleType, clickPos + Vector3.up);
-            _gameEvents.OnUnitSpawned.Invoke();
         }
         
         private Vector3 HandleClick()

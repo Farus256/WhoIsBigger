@@ -19,12 +19,42 @@ namespace WhoIsBigger.Scripts.Presenter
             
             _eventManager = eventManager;
             _eventManager.OnUnitSpawned.AddListener(OnUnitSpawned);
+            _eventManager.OnUnitDied.AddListener(OnUnitDied);
         }
-
-        private void OnUnitSpawned()
+        
+        private void OnUnitSpawned(CapsuleType type)
         {
-            _gameModel.FriendlyUnitsCount++;
-            Debug.Log("OnUnitSpawned");
+            switch (type)
+            {
+                case CapsuleType.Friendly:
+                    _gameModel.FriendlyUnitsCount++;
+                    break;
+                
+                case CapsuleType.Enemy:
+                    _gameModel.EnemyUnitsCount++;
+                    break;
+            }
+            
+            Debug.Log("UnitSpawned");
+            _gameUIManager.UpdateStatistics(_gameModel);
+        }
+        
+        private void OnUnitDied(CapsuleType type)
+        {
+            switch (type)
+            {
+                case CapsuleType.Friendly:
+                    _gameModel.FriendlyUnitsDead++;
+                    _gameModel.FriendlyUnitsCount--;
+                    break;
+                
+                case CapsuleType.Enemy:
+                    _gameModel.EnemyUnitsDead++;
+                    _gameModel.EnemyUnitsCount--;
+                    break;
+            }
+            
+            Debug.Log("UnitDied");
             _gameUIManager.UpdateStatistics(_gameModel);
         }
     }
