@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.Rendering;
 
-namespace WhoIsBigger.Scripts.View
+namespace WhoIsBigger.Scripts.Views.Capsule
 {
     public class CollisionForwarder : MonoBehaviour
     {
@@ -13,6 +12,7 @@ namespace WhoIsBigger.Scripts.View
 
         private void OnTriggerEnter (Collider other)
         {
+            
             _controller.HandleFight(other);
         }
     }

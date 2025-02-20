@@ -1,4 +1,4 @@
-﻿namespace WhoIsBigger.Scripts.Controllers.Capsule
+﻿namespace WhoIsBigger.Scripts.Common
 {
     public static class CapsuleTag
     {

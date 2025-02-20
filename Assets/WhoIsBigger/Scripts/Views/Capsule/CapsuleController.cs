@@ -1,25 +1,29 @@
-﻿using System;
-using System.Linq;
-using ProjectDawn.Navigation;
-using UnityEngine;
+﻿using System.Linq;
 using ProjectDawn.Navigation.Hybrid;
 using Unity.VisualScripting;
-using UnityEditor;
-using WhoIsBigger.Scripts.Controllers.Capsule;
+using UnityEngine;
+using UnityEngine.Serialization;
+using WhoIsBigger.Scripts.Common;
+using WhoIsBigger.Scripts.Models;
+using WhoIsBigger.Scripts.Services;
 using Zenject;
 
-namespace WhoIsBigger.Scripts.View
+namespace WhoIsBigger.Scripts.Views.Capsule
 {
     public class CapsuleController : MonoBehaviour
     {
+        
+        private CapsuleType _capsuleType;
+        
         [Inject] private EventManager _eventManager;
         private AgentAuthoring _agent;
-        private CapsuleType _capsuleType;
         private string _tagToChase;
         
+        public CapsuleType CapsuleType => _capsuleType;
+        
+        // Construct вызывается вручную в CapsuleFactory
         public void Construct(CapsuleType type, Vector3 transform)
         {
-            Debug.Log(type + "postavlen");
             gameObject.transform.position = transform;
             _capsuleType = type;
         }
@@ -48,9 +52,9 @@ namespace WhoIsBigger.Scripts.View
             }
             else
             {
-                Debug.LogError("Неизвестный тип капсулы на " + gameObject.name);
+                Debug.LogError("Unknown type " + gameObject.name);
             }
-            Debug.Log("догоняю " + _tagToChase);
+            Debug.Log("Chasing " + _tagToChase);
         }
 
         private void OnDestroy()
@@ -69,7 +73,7 @@ namespace WhoIsBigger.Scripts.View
             var target = FindNearestTarget();
             if (target != null)
             {
-                _agent.SetDestination(target.transform.position + new Vector3(0.2f, 0, 0));
+                _agent.SetDestination(target.transform.position );
             }
             else
             {
@@ -82,25 +86,33 @@ namespace WhoIsBigger.Scripts.View
             var targetList = _capsuleType == CapsuleType.Friendly 
                 ? CapsuleRegistry.EnemyCapsules 
                 : CapsuleRegistry.FriendlyCapsules;
-
-            if (targetList.Count == 0)
+    
+            var validTargets = targetList.Where(c => c != null && c.gameObject.activeInHierarchy).ToList();
+            if (validTargets.Count == 0)
                 return null;
 
-            CapsuleController nearest = targetList
+            CapsuleController nearest = validTargets
                 .OrderBy(c => Vector3.Distance(transform.position, c.transform.position))
                 .First();
             return nearest.gameObject;
         }
-
-        public void HandleFight(Collider other)
+        
+        public void HandleFight(Collider collider)
         {
-            Debug.Log("OnCollisionEnter");
-            if (other.gameObject.CompareTag(_tagToChase))
+            var otherCapsule = collider.GetComponentInParent<CapsuleController>();
+            if(otherCapsule == null)
             {
-                Destroy(other.gameObject);
-                Destroy(gameObject);
-                _eventManager.OnUnitDied.Invoke(_capsuleType);
+                Debug.LogWarning("Другой объект не имеет CapsuleController");
+                return;
+            }
+            
+            // Убираем задваивание
+            if (this.GetInstanceID() < otherCapsule.GetInstanceID())
+            {
+                _eventManager.OnUnitDie.Invoke(this);
+                _eventManager.OnUnitDie.Invoke(otherCapsule);
             }
         }
+
     }
 }

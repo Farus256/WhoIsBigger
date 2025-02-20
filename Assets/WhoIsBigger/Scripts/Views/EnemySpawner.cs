@@ -1,15 +1,15 @@
-﻿using ProjectDawn.Navigation.Hybrid;
-using Unity.Mathematics;
+﻿using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
+using WhoIsBigger.Scripts.Common;
+using WhoIsBigger.Scripts.Services;
 using Zenject;
-using Random = UnityEngine.Random;
 
-namespace WhoIsBigger.Scripts.Presenter
+namespace WhoIsBigger.Scripts.Views
 {
     public class EnemySpawner : MonoBehaviour
     {
-        [Inject] private CapsuleFactory _capsuleFactory;
+        //[Inject] private ICapsulePoolFactory _capsulePoolFactory;
+        [Inject] private EventManager _eventManager;
         
         public float interval = 1;
         public float3 size = new float3(1, 0, 1);
@@ -20,7 +20,7 @@ namespace WhoIsBigger.Scripts.Presenter
         private float _elapsed;
         private Unity.Mathematics.Random _random = new Unity.Mathematics.Random(1);
 
-        void Update()
+        private void Update()
         {
             if (maxCount == count)
                 return;
@@ -31,7 +31,7 @@ namespace WhoIsBigger.Scripts.Presenter
                 float3 offset = _random.NextFloat3(-size, size);
                 float3 position = (float3) transform.position + offset;
                 
-                _capsuleFactory.Create(capsuleType, position);
+                _eventManager.OnUnitSpawn.Invoke(capsuleType, position);
                 
                 _elapsed -= interval;
                 count++;

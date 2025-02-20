@@ -1,9 +1,8 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-using WhoIsBigger.Scripts.Model;
+using WhoIsBigger.Scripts.Models;
 
-namespace WhoIsBigger.Scripts.View
+namespace WhoIsBigger.Scripts.Views
 {
     public class GameUIManager : MonoBehaviour
     {

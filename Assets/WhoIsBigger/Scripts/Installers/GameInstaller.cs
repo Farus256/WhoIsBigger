@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
-using WhoIsBigger.Scripts.Presenter;
-using WhoIsBigger.Scripts.View;
+using WhoIsBigger.Scripts.Common;
+using WhoIsBigger.Scripts.Presenters;
+using WhoIsBigger.Scripts.Services;
+using WhoIsBigger.Scripts.Views;
+using WhoIsBigger.Scripts.Views.Capsule;
 using Zenject;
 
 namespace WhoIsBigger.Scripts.Installer
@@ -22,16 +25,14 @@ namespace WhoIsBigger.Scripts.Installer
             
             Container.Bind<EventManager>().FromComponentInHierarchy().AsSingle();
 
+            Container.Bind<SpawnManager>().FromComponentInHierarchy().AsSingle();
+            
             Container.BindInstance(friendlyCapsulePrefab).WithId("FriendlyCapsulePrefab").AsTransient();
             Container.BindInstance(enemyCapsulePrefab).WithId("EnemyCapsulePrefab").AsTransient();
-
+            
             Container.BindFactory<CapsuleType, Vector3, CapsuleController, CapsuleFactory>().AsSingle();
-
+            
             Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
-
-            //Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
-
-            //Container.Bind<GameObject>().WithId("EnemyCapsulePrefab").FromInstance(enemyCapsulePrefab);
         }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace WhoIsBigger.Scripts.View
+namespace WhoIsBigger.Scripts.Views
 {
     public class CameraController : MonoBehaviour
     {

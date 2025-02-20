@@ -1,4 +1,4 @@
-﻿namespace WhoIsBigger.Scripts.Model
+﻿namespace WhoIsBigger.Scripts.Models
 {
     public interface IGameModel
     {

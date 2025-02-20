@@ -1,4 +1,4 @@
-﻿namespace WhoIsBigger.Scripts
+﻿namespace WhoIsBigger.Scripts.Common
 {
     public enum CapsuleType
     {

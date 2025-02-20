@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
+using WhoIsBigger.Scripts.Common;
+using WhoIsBigger.Scripts.Services;
 using Zenject;
-using System;
-using WhoIsBigger.Scripts.Presenter;
 
-namespace WhoIsBigger.Scripts.View
+namespace WhoIsBigger.Scripts.Views
 {
     public class ClickController : MonoBehaviour
     {
-        [Inject] private CapsuleFactory _capsuleFactory;
+        [Inject] private EventManager _eventManager;
         private void Update()
         {
             if (Input.GetMouseButtonDown(0))
@@ -27,9 +27,8 @@ namespace WhoIsBigger.Scripts.View
                 
             if (clickPos == Vector3.zero)
                 return;
-
-            Debug.Log("программа поставила" + capsuleType);
-            _capsuleFactory.Create(capsuleType, clickPos + Vector3.up);
+            
+            _eventManager.OnUnitSpawn.Invoke(capsuleType, clickPos + Vector3.up);
         }
         
         private Vector3 HandleClick()

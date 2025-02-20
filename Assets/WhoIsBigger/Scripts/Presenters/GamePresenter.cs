@@ -1,12 +1,17 @@
 ﻿using UnityEngine;
-using WhoIsBigger.Scripts.Model;
-using WhoIsBigger.Scripts.View;
+using WhoIsBigger.Scripts.Common;
+using WhoIsBigger.Scripts.Models;
+using WhoIsBigger.Scripts.Services;
+using WhoIsBigger.Scripts.Views;
+using WhoIsBigger.Scripts.Views.Capsule;
 using Zenject;
 
-namespace WhoIsBigger.Scripts.Presenter
+namespace WhoIsBigger.Scripts.Presenters
 {
     public class GamePresenter
     {
+        [Inject] private CapsuleFactory _capsuleFactory;
+        
         private readonly IGameModel _gameModel;
         private GameUIManager _gameUIManager;
         private EventManager _eventManager;
@@ -18,13 +23,13 @@ namespace WhoIsBigger.Scripts.Presenter
             _gameUIManager = gameUIManager;
             
             _eventManager = eventManager;
-            _eventManager.OnUnitSpawned.AddListener(OnUnitSpawned);
-            _eventManager.OnUnitDied.AddListener(OnUnitDied);
+            _eventManager.OnUnitSpawn.AddListener(OnUnitSpawned);
+            _eventManager.OnUnitDie.AddListener(OnUnitDied);
         }
         
-        private void OnUnitSpawned(CapsuleType type)
+        private void OnUnitSpawned(CapsuleType capsuleType, Vector3 pos)
         {
-            switch (type)
+            switch (capsuleType)
             {
                 case CapsuleType.Friendly:
                     _gameModel.FriendlyUnitsCount++;
@@ -39,8 +44,9 @@ namespace WhoIsBigger.Scripts.Presenter
             _gameUIManager.UpdateStatistics(_gameModel);
         }
         
-        private void OnUnitDied(CapsuleType type)
+        private void OnUnitDied(CapsuleController capsuleController)
         {
+            CapsuleType type = capsuleController.CapsuleType;
             switch (type)
             {
                 case CapsuleType.Friendly:
@@ -51,6 +57,10 @@ namespace WhoIsBigger.Scripts.Presenter
                 case CapsuleType.Enemy:
                     _gameModel.EnemyUnitsDead++;
                     _gameModel.EnemyUnitsCount--;
+                    break;
+                
+                default:
+                    Debug.LogError("Unknown capsule type");
                     break;
             }
             

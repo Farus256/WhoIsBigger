@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
-using WhoIsBigger.Scripts.View;
+using WhoIsBigger.Scripts.Views.Capsule;
 
-namespace WhoIsBigger.Scripts.Controllers.Capsule
+namespace WhoIsBigger.Scripts.Models
 {
-    public class CapsuleRegistry
+    public static class CapsuleRegistry
     {
         public static readonly List<CapsuleController> FriendlyCapsules = new List<CapsuleController>();
         public static readonly List<CapsuleController> EnemyCapsules = new List<CapsuleController>();

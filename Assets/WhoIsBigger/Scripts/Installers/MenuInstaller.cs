@@ -1,6 +1,6 @@
 ﻿using Zenject;
 
-namespace WhoIsBigger.Scripts.Installer
+namespace WhoIsBigger.Scripts.Installers
 {
     public class MenuInstaller : MonoInstaller
     {

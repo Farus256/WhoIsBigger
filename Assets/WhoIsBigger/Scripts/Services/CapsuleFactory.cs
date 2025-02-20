@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
-using WhoIsBigger.Scripts.View;
+using WhoIsBigger.Scripts.Common;
+using WhoIsBigger.Scripts.Views;
+using WhoIsBigger.Scripts.Views.Capsule;
 using Zenject;
 
-namespace WhoIsBigger.Scripts.Presenter
+namespace WhoIsBigger.Scripts.Services
 {
     public class CapsuleFactory : PlaceholderFactory<CapsuleType, Vector3, CapsuleController>
     {
@@ -48,8 +50,6 @@ namespace WhoIsBigger.Scripts.Presenter
             
             _container.Inject(controller);
             controller.Construct(capsuleType,pos);
-            
-            _eventManager.OnUnitSpawned.Invoke(capsuleType);
             
             return instance.GetComponent<CapsuleController>();
         }
