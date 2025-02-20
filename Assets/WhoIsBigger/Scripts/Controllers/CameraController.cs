@@ -16,7 +16,7 @@ namespace WhoIsBigger.Scripts.View
             
             Vector3 movement = new Vector3(horizontal, 0, vertical) * (movementSpeed * Time.deltaTime);
             
-            transform.Translate(movement);
+            transform.Translate(movement, Space.World);
         }
     }
 }
