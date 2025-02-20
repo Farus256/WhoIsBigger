@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using ProjectDawn.Navigation;
 using UnityEngine;
 using ProjectDawn.Navigation.Hybrid;
@@ -33,40 +34,65 @@ namespace WhoIsBigger.Scripts.View
 
         private void Start()
         {
+            // Регистрируем капсулу в реестре в зависимости от её типа
             if (_capsuleType == CapsuleType.Friendly)
             {
+                CapsuleRegistry.FriendlyCapsules.Add(this);
                 _tagToChase = CapsuleTag.Enemy;
+            }
+            else if (_capsuleType == CapsuleType.Enemy)
+            {
+                CapsuleRegistry.EnemyCapsules.Add(this);
+                _tagToChase = CapsuleTag.Friendly;
             }
             else
             {
-                _tagToChase = CapsuleTag.Friendly;
+                Debug.LogError("Неизвестный тип капсулы на " + gameObject.name);
             }
-            Debug.Log("догоняю" + _tagToChase);
+            Debug.Log("догоняю " + _tagToChase);
         }
-        
+
+        private void OnDestroy()
+        {
+            // Удаляем капсулу из реестра, когда она отключается
+            if (_capsuleType == CapsuleType.Friendly)
+                CapsuleRegistry.FriendlyCapsules.Remove(this);
+            else if (_capsuleType == CapsuleType.Enemy)
+                CapsuleRegistry.EnemyCapsules.Remove(this);
+        }
+
         private void Update()
         {
-            if (_agent.IsUnityNull())
-            {
+            if (_agent == null)
                 return;
-            }
             
-            var enemy = FindNearestEnemy();
-            if (enemy != null)
+            var target = FindNearestTarget();
+            if (target != null)
             {
-                _agent.SetDestination(enemy.transform.position + new Vector3(0.1f, 0, 0));
+                _agent.SetDestination(target.transform.position + new Vector3(0.2f, 0, 0));
             }
+            else
+            {
+                _agent.Stop();
+            }               
         }
-
-        private GameObject FindNearestEnemy()
+        
+        private GameObject FindNearestTarget()
         {
-            var enemies = GameObject.FindGameObjectsWithTag(_tagToChase);
-            if(enemies.Length == 0){return null;}
-            
-            return enemies.OrderBy(e => Vector3.Distance(transform.position, e.transform.position)).First();
+            var targetList = _capsuleType == CapsuleType.Friendly 
+                ? CapsuleRegistry.EnemyCapsules 
+                : CapsuleRegistry.FriendlyCapsules;
+
+            if (targetList.Count == 0)
+                return null;
+
+            CapsuleController nearest = targetList
+                .OrderBy(c => Vector3.Distance(transform.position, c.transform.position))
+                .First();
+            return nearest.gameObject;
         }
 
-        public void OnCollisionEnter(Collision  collision)
+        public void HandleFight(Collision collision)
         {
             Debug.Log("OnCollisionEnter");
             if (collision.gameObject.CompareTag(_tagToChase))

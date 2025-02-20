@@ -11,9 +11,9 @@ namespace WhoIsBigger.Scripts.View
             _controller = GetComponentInParent<CapsuleController>();
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void OnCollisionEnter (Collision collision)
         {
-            _controller.OnCollisionEnter(collision);
+            _controller.HandleFight(collision);
         }
     }
 }

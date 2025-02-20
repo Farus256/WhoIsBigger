@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8499196359817350719}
   - component: {fileID: 5748148531203536536}
   - component: {fileID: 4233094488431693148}
-  - component: {fileID: 1687329023190051201}
+  - component: {fileID: 6582550792321958887}
   - component: {fileID: 7614872784651609804}
   m_Layer: 0
   m_Name: Cylinder
@@ -105,11 +105,11 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.75
+  m_Radius: 0.6
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!54 &1687329023190051201
+--- !u!54 &6582550792321958887
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -179,7 +179,7 @@ Transform:
   m_GameObject: {fileID: 3010992070771866885}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -202,7 +202,7 @@ MonoBehaviour:
   Speed: 3.5
   Acceleration: 8
   AngularSpeed: 120
-  StoppingDistance: 0.1
+  StoppingDistance: 0
   AutoBreaking: 1
   m_Layers: 1
 --- !u!114 &8696686748977945673
@@ -218,7 +218,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Radius: 0.5
-  Height: 2
+  Height: 1
 --- !u!114 &4547573000987778924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,7 +234,7 @@ MonoBehaviour:
   AgentTypeId: 0
   AreaMask: -1
   AutoRepath: 1
-  m_Grounded: 1
+  m_Grounded: 0
   MappingExtent:
     x: 10
     y: 10

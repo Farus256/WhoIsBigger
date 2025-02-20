@@ -30,7 +30,7 @@ namespace WhoIsBigger.Scripts.View
                 return;
 
             Debug.Log("программа поставила" + capsuleType);
-            _capsuleFactory.Create(capsuleType, clickPos);
+            _capsuleFactory.Create(capsuleType, clickPos + Vector3.up);
             _gameEvents.OnUnitSpawned.Invoke();
         }
         
