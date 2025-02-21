@@ -4,7 +4,7 @@ namespace WhoIsBigger.Scripts.Views
 {
     public class CameraController : MonoBehaviour
     {
-        public float movementSpeed = 5f;
+        public float movementSpeed = 10f;
 
         void Update()
         {

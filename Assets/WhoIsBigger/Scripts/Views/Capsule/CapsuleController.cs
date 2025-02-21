@@ -76,11 +76,11 @@ namespace WhoIsBigger.Scripts.Views.Capsule
         public void HandleFight(Collider collider)
         {
             var otherCapsule = collider.GetComponentInParent<CapsuleController>();
-            if(otherCapsule == null)
-            {
-                Debug.LogWarning("No CapsuleController found on " + collider.name);
+            if(otherCapsule == null) { return; }
+            
+            // Проверка на френдли фаер
+            if (_capsuleType == otherCapsule.CapsuleType)
                 return;
-            }
             
             // Убираем задваивание
             if (this.GetInstanceID() < otherCapsule.GetInstanceID())
