@@ -6,6 +6,7 @@ using WhoIsBigger.Scripts.Views.Capsule;
 
 namespace WhoIsBigger.Scripts.Services.CapsuleService
 {
+    // Сервис для регистрации капсул в лист и поиска ближайшей капсулы
     public class CapsuleService : ICapsuleService
     {
         private readonly List<CapsuleController> _friendlyCapsules = new List<CapsuleController>();

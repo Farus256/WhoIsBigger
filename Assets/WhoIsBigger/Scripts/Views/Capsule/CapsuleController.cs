@@ -91,6 +91,7 @@ namespace WhoIsBigger.Scripts.Views.Capsule
         
         private void OnDestroy()
         {
+            // разрегистрируем капсулу
             _capsuleService.UnregisterCapsule(this);
         }
     }

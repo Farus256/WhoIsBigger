@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/WhoIsBigger/Scenes/MenuScene.unity
     guid: f9807ae7d1dd4154ba8d8e6877841539
+  - enabled: 1
+    path: Assets/WhoIsBigger/Scenes/GameScene.unity
+    guid: 1b53d1f599c92064a836a3617712042b
   m_configObjects: {}
