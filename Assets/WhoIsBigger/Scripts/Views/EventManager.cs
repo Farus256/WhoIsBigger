@@ -5,7 +5,7 @@ using WhoIsBigger.Scripts.Views.Capsule;
 
 namespace WhoIsBigger.Scripts.Views
 {
-    public class UnitSpawnEvent: UnityEvent<CapsuleType, Vector3>{}
+    public class UnitSpawnEvent: UnityEvent<EntityType, Vector3>{}
     public class UnitDieEvent: UnityEvent<CapsuleController>{}
     
     public class EventManager

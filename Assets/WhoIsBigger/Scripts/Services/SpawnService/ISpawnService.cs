@@ -6,7 +6,7 @@ namespace WhoIsBigger.Scripts.Services.SpawnService
 {
     public interface ISpawnService
     {
-        CapsuleController SpawnCapsule(CapsuleType type, Vector3 position);
+        CapsuleController SpawnCapsule(EntityType type, Vector3 position);
         void DestroyCapsule(CapsuleController capsule);
     }
 }

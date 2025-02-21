@@ -14,13 +14,13 @@ namespace WhoIsBigger.Scripts.Views.Capsule
     public class CapsuleController : MonoBehaviour
     {
         [Inject] private EventManager _eventManager;
-        [Inject] private ICapsuleService _capsuleService;
+        [Inject] private IRegisterService _registerService;
         
         private AgentAuthoring _agent;
         private string _tagToChase;
         
-        private CapsuleType _capsuleType;
-        public CapsuleType CapsuleType => _capsuleType;
+        private EntityType _entityType;
+        public EntityType EntityType => _entityType;
         
         public int health;
         public int damage;
@@ -33,10 +33,10 @@ namespace WhoIsBigger.Scripts.Views.Capsule
         private HealthBar _healthBar;
         
         // Construct вызывается вручную в CapsuleFactory
-        public void Construct(CapsuleType type, Vector3 transform)
+        public void Construct(EntityType type, Vector3 transform)
         {
             gameObject.transform.position = transform;
-            _capsuleType = type;
+            _entityType = type;
         }
         
         private void Awake()
@@ -56,16 +56,16 @@ namespace WhoIsBigger.Scripts.Views.Capsule
         private void Start()
         {
             // Регистрируем капсулу 
-            _capsuleService.RegisterCapsule(this);
+            _registerService.RegisterCapsule(this);
             
             // Устанавливаем тег для преследования
-            if (_capsuleType == CapsuleType.Friendly)
+            if (_entityType == EntityType.Friendly)
             {
-                _tagToChase = CapsuleTag.Enemy;
+                _tagToChase = EntityTag.Enemy;
             }
-            else if (_capsuleType == CapsuleType.Enemy)
+            else if (_entityType == EntityType.Enemy)
             {
-                _tagToChase = CapsuleTag.Friendly;
+                _tagToChase = EntityTag.Friendly;
             }
             else
             {
@@ -84,28 +84,45 @@ namespace WhoIsBigger.Scripts.Views.Capsule
             if (_agent == null)
                 return;
 
-            var target = _capsuleService.FindNearestTarget(_capsuleType, transform.position);
-            if (target != null)
+            var targetCapsule = _registerService.FindNearestTarget(_entityType, transform.position);
+            if (targetCapsule != null)
             {
-                _agent.SetDestination(target.transform.position);
+                _agent.SetDestination(targetCapsule.transform.position);
             }
             else
             {
-                _agent.Stop();
+                var targetSphere = _registerService.FindNearestSphere(_entityType, transform.position);
+                if (targetSphere != null)
+                {
+                    _agent.SetDestination(targetSphere.transform.position);
+                }
+                else
+                {
+                    _agent.Stop();
+                }
             }               
         }
         
-        public void HandleFight(Collider collider, bool isDeadFight)
+        public void HandleFight(Collider collider)
         {
             var otherCapsule = collider.GetComponentInParent<CapsuleController>();
             if(otherCapsule == null) { return; }
             
             // Проверка на френдли фаер
-            if (_capsuleType == otherCapsule.CapsuleType)
+            if (_entityType == otherCapsule.EntityType)
                 return;
             
             otherCapsule.TakeDamage(this.damage);
             ApplyImpulse(otherCapsule.transform);
+        }
+        
+        public void DestroySphere(Collider collider)
+        {
+            var otherCapsule = collider.GetComponentInParent<SphereController>();
+            if (_entityType == otherCapsule.entityType)
+                return;
+            
+            Destroy(collider.gameObject);
         }
         
         public void TakeDamage(int getDamage)
@@ -144,7 +161,7 @@ namespace WhoIsBigger.Scripts.Views.Capsule
         private void OnDestroy()
         {
             // разрегистрируем капсулу
-            _capsuleService.UnregisterCapsule(this);
+            _registerService.UnregisterCapsule(this);
         }
     }
 }

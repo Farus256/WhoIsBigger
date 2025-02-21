@@ -12,23 +12,23 @@ namespace WhoIsBigger.Scripts.Views
         {
             if (Input.GetMouseButtonDown(0))
             {
-                SpawnUnit(CapsuleType.Friendly);
+                SpawnUnit(EntityType.Friendly);
             }
 
             if (Input.GetMouseButtonUp(1))
             {
-                SpawnUnit(CapsuleType.Enemy);
+                SpawnUnit(EntityType.Enemy);
             }
         }
 
-        private void SpawnUnit(CapsuleType capsuleType)
+        private void SpawnUnit(EntityType entityType)
         {
             Vector3 clickPos = HandleClick();
                 
             if (clickPos == Vector3.zero)
                 return;
             
-            _eventManager.OnUnitSpawn.Invoke(capsuleType, clickPos + Vector3.up);
+            _eventManager.OnUnitSpawn.Invoke(entityType, clickPos + Vector3.up);
         }
         
         private Vector3 HandleClick()

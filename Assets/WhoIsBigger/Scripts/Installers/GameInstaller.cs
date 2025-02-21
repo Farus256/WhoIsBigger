@@ -18,15 +18,17 @@ namespace WhoIsBigger.Scripts.Installers
         public override void InstallBindings()
         {
             // DI
-            Container.Bind<ICapsuleService>().To<CapsuleService>().AsSingle();
+            Container.Bind<IRegisterService>().To<RegisterService>().AsSingle();
             Container.Bind<ISpawnService>().To<SpawnService>().AsSingle();
             Container.Bind<EventManager>().AsSingle();
+            
+            // Контейнер для капсул
             Container.Bind<Transform>().WithId("CapsulesContainer").FromInstance(capsulesContainer).AsSingle();
 
             // Фабрика
             Container.BindInstance(friendlyCapsulePrefab).WithId("FriendlyCapsulePrefab").AsTransient();
             Container.BindInstance(enemyCapsulePrefab).WithId("EnemyCapsulePrefab").AsTransient();
-            Container.BindFactory<CapsuleType, Vector3, CapsuleController, CapsuleFactory>().AsSingle();
+            Container.BindFactory<EntityType, Vector3, CapsuleController, CapsuleFactory>().AsSingle();
 
             // Presenter
             Container.Bind<GamePresenter>().AsSingle().NonLazy();
@@ -35,7 +37,7 @@ namespace WhoIsBigger.Scripts.Installers
             Container.Bind<IGameUI>().To<GameUIManager>().FromComponentInHierarchy().AsSingle();
             Container.Bind<CameraController>().FromComponentInHierarchy().AsSingle();
             Container.Bind<ClickController>().FromComponentInHierarchy().AsSingle();
-            Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<UnitSpawner>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

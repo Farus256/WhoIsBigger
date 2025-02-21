@@ -13,9 +13,13 @@ namespace WhoIsBigger.Scripts.Views.Capsule
 
         private void OnTriggerEnter (Collider other)
         {
-            if (other.CompareTag(CapsuleTag.Friendly) || other.CompareTag(CapsuleTag.Enemy))
+            if (other.CompareTag(EntityTag.Friendly) || other.CompareTag(EntityTag.Enemy))
             {
-                _controller.HandleFight(other, false);
+                _controller.HandleFight(other);
+            }
+            else if(other.CompareTag(EntityTag.SphereEnemy) || other.CompareTag(EntityTag.SphereFriendly))
+            {
+                _controller.DestroySphere(other);
             }
         }
     }

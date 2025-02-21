@@ -29,18 +29,18 @@ public class GamePresenter
         _eventManager.OnUnitDie.AddListener(OnUnitDied);
     }
 
-    private void OnUnitSpawned(CapsuleType capsuleType, Vector3 pos)
+    private void OnUnitSpawned(EntityType entityType, Vector3 pos)
     {
         // Спавн
-        _spawnService.SpawnCapsule(capsuleType, pos);
+        _spawnService.SpawnCapsule(entityType, pos);
 
         // Обновляем статистику
-        switch (capsuleType)
+        switch (entityType)
         {
-            case CapsuleType.Friendly:
+            case EntityType.Friendly:
                 _gameModel.FriendlyUnitsCount++;
                 break;
-            case CapsuleType.Enemy:
+            case EntityType.Enemy:
                 _gameModel.EnemyUnitsCount++;
                 break;
             default:
@@ -54,13 +54,13 @@ public class GamePresenter
     private void OnUnitDied(CapsuleController capsuleController)
     {
         // Обновляем статистику
-        switch (capsuleController.CapsuleType)
+        switch (capsuleController.EntityType)
         {
-            case CapsuleType.Friendly:
+            case EntityType.Friendly:
                 _gameModel.FriendlyUnitsDead++;
                 _gameModel.FriendlyUnitsCount--;
                 break;
-            case CapsuleType.Enemy:
+            case EntityType.Enemy:
                 _gameModel.EnemyUnitsDead++;
                 _gameModel.EnemyUnitsCount--;
                 break;

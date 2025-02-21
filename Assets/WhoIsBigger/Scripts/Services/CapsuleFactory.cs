@@ -6,7 +6,7 @@ using Zenject;
 
 namespace WhoIsBigger.Scripts.Services
 {
-    public class CapsuleFactory : PlaceholderFactory<CapsuleType, Vector3, CapsuleController>
+    public class CapsuleFactory : PlaceholderFactory<EntityType, Vector3, CapsuleController>
     {
         private readonly DiContainer _container;
         private readonly GameObject _friendlyCapsulePrefab;
@@ -26,19 +26,19 @@ namespace WhoIsBigger.Scripts.Services
             _capsulesContainer = capsulesContainer;
         }
             
-        public override CapsuleController Create(CapsuleType capsuleType, Vector3 pos)
+        public override CapsuleController Create(EntityType entityType, Vector3 pos)
         {
             GameObject prefabToInstance = null;
-            switch (capsuleType)
+            switch (entityType)
             {
-                case CapsuleType.Enemy:
+                case EntityType.Enemy:
                     prefabToInstance = _enemyCapsulePrefab;
                     break;
-                case CapsuleType.Friendly:
+                case EntityType.Friendly:
                     prefabToInstance = _friendlyCapsulePrefab;
                     break;
                 default:
-                    Debug.LogError($"Unknown capsule type: {capsuleType}");
+                    Debug.LogError($"Unknown capsule type: {entityType}");
                     return null;
             }
             
@@ -56,7 +56,7 @@ namespace WhoIsBigger.Scripts.Services
             }
             
             _container.Inject(controller);
-            controller.Construct(capsuleType,pos);
+            controller.Construct(entityType,pos);
             
             return instance.GetComponent<CapsuleController>();
         }

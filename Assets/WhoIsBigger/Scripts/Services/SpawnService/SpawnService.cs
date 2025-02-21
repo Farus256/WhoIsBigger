@@ -13,7 +13,7 @@ namespace WhoIsBigger.Scripts.Services.SpawnService
             _capsuleFactory = capsuleFactory;
         }
 
-        public CapsuleController SpawnCapsule(CapsuleType type, Vector3 position)
+        public CapsuleController SpawnCapsule(EntityType type, Vector3 position)
         {
             return _capsuleFactory.Create(type, position);
         }

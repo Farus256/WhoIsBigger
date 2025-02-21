@@ -1,5 +1,6 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 using WhoIsBigger.Scripts.Common;
 using WhoIsBigger.Scripts.Models;
 using WhoIsBigger.Scripts.Services;
@@ -7,7 +8,7 @@ using Zenject;
 
 namespace WhoIsBigger.Scripts.Views
 {
-    public class EnemySpawner : MonoBehaviour
+    public class UnitSpawner : MonoBehaviour
     {
         [Inject] private EventManager _eventManager;
         [Inject] private IGameModel _gameModel;
@@ -15,7 +16,7 @@ namespace WhoIsBigger.Scripts.Views
         public float interval = 1;
         public float3 size = new float3(1, 0, 1);
         public int count;
-        public CapsuleType capsuleType;
+        [FormerlySerializedAs("capsuleType")] public EntityType entityType;
         
         private float _elapsed;
         private Unity.Mathematics.Random _random = new Unity.Mathematics.Random(1);
@@ -31,7 +32,7 @@ namespace WhoIsBigger.Scripts.Views
                 float3 offset = _random.NextFloat3(-size, size);
                 float3 position = (float3) transform.position + offset;
                 
-                _eventManager.OnUnitSpawn.Invoke(capsuleType, position);
+                _eventManager.OnUnitSpawn.Invoke(entityType, position);
                 
                 _elapsed -= interval;
                 count++;

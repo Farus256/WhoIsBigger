@@ -1,6 +1,6 @@
 ﻿namespace WhoIsBigger.Scripts.Common
 {
-    public enum CapsuleType
+    public enum EntityType
     {
         Friendly,
         Enemy
