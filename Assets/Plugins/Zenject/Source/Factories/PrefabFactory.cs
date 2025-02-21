@@ -45,13 +45,13 @@ namespace Zenject
             get { return _container; }
         }
 
-        public virtual T Create(UnityEngine.Object prefab, P1 param)
+        public virtual T Create(UnityEngine.Object capsuleType, P1 param)
         {
-            Assert.That(prefab != null,
+            Assert.That(capsuleType != null,
                "Null prefab given to factory create method when instantiating object with type '{0}'.", typeof(T));
 
             return (T)_container.InstantiatePrefabForComponentExplicit(
-                typeof(T), prefab, InjectUtil.CreateArgListExplicit(param));
+                typeof(T), capsuleType, InjectUtil.CreateArgListExplicit(param));
         }
     }
 
