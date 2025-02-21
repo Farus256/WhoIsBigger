@@ -6,5 +6,6 @@
         int EnemyUnitsCount{get;set;}
         int FriendlyUnitsDead{get;set;}
         int EnemyUnitsDead{get;set;}
+        int MaxUnitsCount{get; set; }
     }
 }

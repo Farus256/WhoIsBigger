@@ -1,4 +1,7 @@
-﻿using Zenject;
+﻿using UnityEngine.SceneManagement;
+using WhoIsBigger.Scripts.Views;
+using WhoIsBigger.Scripts.Views.UIManagers;
+using Zenject;
 
 namespace WhoIsBigger.Scripts.Installers
 {
@@ -6,7 +9,8 @@ namespace WhoIsBigger.Scripts.Installers
     {
         public override void InstallBindings()
         {
-            //todo
+            Container.Bind<MenuSceneManager>().AsSingle();
+            Container.Bind<MenuUIManager>().FromComponentInHierarchy().AsSingle();
         }
     }
 }

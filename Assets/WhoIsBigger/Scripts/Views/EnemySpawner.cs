@@ -1,6 +1,7 @@
 ﻿using Unity.Mathematics;
 using UnityEngine;
 using WhoIsBigger.Scripts.Common;
+using WhoIsBigger.Scripts.Models;
 using WhoIsBigger.Scripts.Services;
 using Zenject;
 
@@ -9,11 +10,11 @@ namespace WhoIsBigger.Scripts.Views
     public class EnemySpawner : MonoBehaviour
     {
         [Inject] private EventManager _eventManager;
+        [Inject] private IGameModel _gameModel;
         
         public float interval = 1;
         public float3 size = new float3(1, 0, 1);
         public int count;
-        public int maxCount = 1000;
         public CapsuleType capsuleType;
         
         private float _elapsed;
@@ -21,7 +22,7 @@ namespace WhoIsBigger.Scripts.Views
 
         private void Update()
         {
-            if (maxCount == count)
+            if (_gameModel.MaxUnitsCount == count)
                 return;
 
             _elapsed += Time.deltaTime;
