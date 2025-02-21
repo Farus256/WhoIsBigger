@@ -27,7 +27,6 @@ public class GamePresenter
         
         _eventManager.OnUnitSpawn.AddListener(OnUnitSpawned);
         _eventManager.OnUnitDie.AddListener(OnUnitDied);
-        _eventManager.OnCapsuleCollide.AddListener(OnCapsuleCollided);
     }
 
     private void OnUnitSpawned(CapsuleType capsuleType, Vector3 pos)
@@ -74,11 +73,5 @@ public class GamePresenter
         
         // Удаляем
         _spawnService.DestroyCapsule(capsuleController);
-    }
-
-    private void OnCapsuleCollided(CapsuleController c1, CapsuleController c2)
-    {
-        _eventManager.OnUnitDie.Invoke(c1);
-        _eventManager.OnUnitDie.Invoke(c2);
     }
 }

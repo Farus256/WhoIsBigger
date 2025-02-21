@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using WhoIsBigger.Scripts.Common;
 
 namespace WhoIsBigger.Scripts.Views.Capsule
 {
@@ -12,8 +13,10 @@ namespace WhoIsBigger.Scripts.Views.Capsule
 
         private void OnTriggerEnter (Collider other)
         {
-            
-            _controller.HandleFight(other);
+            if (other.CompareTag(CapsuleTag.Friendly) || other.CompareTag(CapsuleTag.Enemy))
+            {
+                _controller.HandleFight(other, false);
+            }
         }
     }
 }
