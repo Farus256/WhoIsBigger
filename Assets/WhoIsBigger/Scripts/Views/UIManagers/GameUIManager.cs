@@ -4,7 +4,7 @@ using WhoIsBigger.Scripts.Models;
 
 namespace WhoIsBigger.Scripts.Views
 {
-    public class GameUIManager : MonoBehaviour
+    public class GameUIManager : MonoBehaviour, IGameUI
     {
         public TMP_Text statisticsText;
         

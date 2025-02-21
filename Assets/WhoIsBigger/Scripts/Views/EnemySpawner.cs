@@ -8,7 +8,6 @@ namespace WhoIsBigger.Scripts.Views
 {
     public class EnemySpawner : MonoBehaviour
     {
-        //[Inject] private ICapsulePoolFactory _capsulePoolFactory;
         [Inject] private EventManager _eventManager;
         
         public float interval = 1;

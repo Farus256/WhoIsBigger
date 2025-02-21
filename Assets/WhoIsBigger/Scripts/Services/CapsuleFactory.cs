@@ -11,16 +11,19 @@ namespace WhoIsBigger.Scripts.Services
         private readonly DiContainer _container;
         private readonly GameObject _friendlyCapsulePrefab;
         private readonly GameObject _enemyCapsulePrefab;
+        private readonly Transform _capsulesContainer;
         
         [Inject] private EventManager _eventManager;
         public CapsuleFactory(
             DiContainer container, 
             [Inject(Id = "FriendlyCapsulePrefab")] GameObject friendlyCapsulePrefab, 
-            [Inject(Id = "EnemyCapsulePrefab")] GameObject enemyCapsulePrefab)
+            [Inject(Id = "EnemyCapsulePrefab")] GameObject enemyCapsulePrefab,
+            [Inject(Id = "CapsulesContainer")] Transform capsulesContainer)
         {
             _container = container;
             _friendlyCapsulePrefab = friendlyCapsulePrefab;
             _enemyCapsulePrefab = enemyCapsulePrefab;
+            _capsulesContainer = capsulesContainer;
         }
             
         public override CapsuleController Create(CapsuleType capsuleType, Vector3 pos)
@@ -39,7 +42,11 @@ namespace WhoIsBigger.Scripts.Services
                     return null;
             }
             
-            GameObject instance = _container.InstantiatePrefab(prefabToInstance, new GameObjectCreationParameters { Position = pos });
+            GameObject instance = _container.InstantiatePrefab(prefabToInstance, new GameObjectCreationParameters
+            {
+                ParentTransform = _capsulesContainer,
+                Position = pos
+            });
 
             CapsuleController controller = instance.GetComponent<CapsuleController>();
             if(controller == null)

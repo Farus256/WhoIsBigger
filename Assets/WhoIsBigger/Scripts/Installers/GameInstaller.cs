@@ -1,37 +1,40 @@
 ﻿using UnityEngine;
 using WhoIsBigger.Scripts.Common;
-using WhoIsBigger.Scripts.Presenters;
 using WhoIsBigger.Scripts.Services;
+using WhoIsBigger.Scripts.Services.CapsuleService;
+using WhoIsBigger.Scripts.Services.SpawnService;
 using WhoIsBigger.Scripts.Views;
 using WhoIsBigger.Scripts.Views.Capsule;
 using Zenject;
 
-namespace WhoIsBigger.Scripts.Installer
+namespace WhoIsBigger.Scripts.Installers
 {
     public class GameInstaller : MonoInstaller
     {
+        [SerializeField] private Transform capsulesContainer;
         [SerializeField] private GameObject friendlyCapsulePrefab;
         [SerializeField] private GameObject enemyCapsulePrefab;
 
         public override void InstallBindings()
-        { 
-            Container.Bind<GamePresenter>().AsSingle().NonLazy();
-            
-            Container.Bind<GameUIManager>().FromComponentInHierarchy().AsSingle();
-            
-            Container.Bind<CameraController>().FromComponentInHierarchy().AsSingle();
-            
-            Container.Bind<ClickController>().FromComponentInHierarchy().AsSingle();
-            
-            Container.Bind<EventManager>().FromComponentInHierarchy().AsSingle();
+        {
+            // DI
+            Container.Bind<ICapsuleService>().To<CapsuleService>().AsSingle();
+            Container.Bind<ISpawnService>().To<SpawnService>().AsSingle();
+            Container.Bind<EventManager>().AsSingle();
+            Container.Bind<Transform>().WithId("CapsulesContainer").FromInstance(capsulesContainer).AsSingle();
 
-            Container.Bind<SpawnManager>().FromComponentInHierarchy().AsSingle();
-            
+            // Фабрика
             Container.BindInstance(friendlyCapsulePrefab).WithId("FriendlyCapsulePrefab").AsTransient();
             Container.BindInstance(enemyCapsulePrefab).WithId("EnemyCapsulePrefab").AsTransient();
-            
             Container.BindFactory<CapsuleType, Vector3, CapsuleController, CapsuleFactory>().AsSingle();
-            
+
+            // Presenter
+            Container.Bind<GamePresenter>().AsSingle().NonLazy();
+
+            // Model
+            Container.Bind<IGameUI>().To<GameUIManager>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<CameraController>().FromComponentInHierarchy().AsSingle();
+            Container.Bind<ClickController>().FromComponentInHierarchy().AsSingle();
             Container.Bind<EnemySpawner>().FromComponentInHierarchy().AsSingle();
         }
     }

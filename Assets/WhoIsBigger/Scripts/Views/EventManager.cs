@@ -7,13 +7,17 @@ namespace WhoIsBigger.Scripts.Views
 {
     public class UnitSpawnEvent: UnityEvent<CapsuleType, Vector3>{}
     public class UnitDieEvent: UnityEvent<CapsuleController>{}
+    public class OnCapsuleCollideEvent: UnityEvent<CapsuleController, CapsuleController>{}
     
-    public class EventManager : MonoBehaviour
+    public class EventManager
     {
         // Ивент спавна юнита
-        public UnitSpawnEvent OnUnitSpawn = new UnitSpawnEvent();
+        public readonly UnitSpawnEvent OnUnitSpawn = new UnitSpawnEvent();
         
         // Ивент смерти юнита
-        public UnitDieEvent OnUnitDie = new UnitDieEvent();
+        public readonly UnitDieEvent OnUnitDie = new UnitDieEvent();
+        
+        // Ивент столкновения капсул
+        public readonly OnCapsuleCollideEvent OnCapsuleCollide = new OnCapsuleCollideEvent();
     }
 }

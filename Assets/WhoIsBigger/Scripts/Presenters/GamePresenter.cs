@@ -1,71 +1,84 @@
 ﻿using UnityEngine;
 using WhoIsBigger.Scripts.Common;
 using WhoIsBigger.Scripts.Models;
-using WhoIsBigger.Scripts.Services;
+using WhoIsBigger.Scripts.Services.SpawnService;
 using WhoIsBigger.Scripts.Views;
 using WhoIsBigger.Scripts.Views.Capsule;
 using Zenject;
 
-namespace WhoIsBigger.Scripts.Presenters
+public class GamePresenter
 {
-    public class GamePresenter
+    private readonly IGameModel _gameModel;
+    private readonly IGameUI _gameUI;
+    private readonly EventManager _eventManager;
+    private readonly ISpawnService _spawnService;
+
+    [Inject]
+    public GamePresenter(
+        IGameModel gameModel,
+        IGameUI gameUI,
+        EventManager eventManager,  
+        ISpawnService spawnService)
     {
-        [Inject] private CapsuleFactory _capsuleFactory;
+        _gameModel = gameModel;
+        _gameUI = gameUI;
+        _eventManager = eventManager;
+        _spawnService = spawnService;
         
-        private readonly IGameModel _gameModel;
-        private GameUIManager _gameUIManager;
-        private EventManager _eventManager;
-        
-        [Inject]
-        public GamePresenter(IGameModel gameModel, GameUIManager gameUIManager, EventManager eventManager)
+        _eventManager.OnUnitSpawn.AddListener(OnUnitSpawned);
+        _eventManager.OnUnitDie.AddListener(OnUnitDied);
+        _eventManager.OnCapsuleCollide.AddListener(OnCapsuleCollided);
+    }
+
+    private void OnUnitSpawned(CapsuleType capsuleType, Vector3 pos)
+    {
+        // Спавн
+        _spawnService.SpawnCapsule(capsuleType, pos);
+
+        // Обновляем статистику
+        switch (capsuleType)
         {
-            _gameModel = gameModel;
-            _gameUIManager = gameUIManager;
-            
-            _eventManager = eventManager;
-            _eventManager.OnUnitSpawn.AddListener(OnUnitSpawned);
-            _eventManager.OnUnitDie.AddListener(OnUnitDied);
+            case CapsuleType.Friendly:
+                _gameModel.FriendlyUnitsCount++;
+                break;
+            case CapsuleType.Enemy:
+                _gameModel.EnemyUnitsCount++;
+                break;
+            default:
+                Debug.Log("Unknown capsule type");
+                return;
+        }
+
+        _gameUI.UpdateStatistics(_gameModel);
+    }
+
+    private void OnUnitDied(CapsuleController capsuleController)
+    {
+        // Обновляем статистику
+        switch (capsuleController.CapsuleType)
+        {
+            case CapsuleType.Friendly:
+                _gameModel.FriendlyUnitsDead++;
+                _gameModel.FriendlyUnitsCount--;
+                break;
+            case CapsuleType.Enemy:
+                _gameModel.EnemyUnitsDead++;
+                _gameModel.EnemyUnitsCount--;
+                break;
+            default:
+                Debug.Log("Unknown capsule type");
+                return;
         }
         
-        private void OnUnitSpawned(CapsuleType capsuleType, Vector3 pos)
-        {
-            switch (capsuleType)
-            {
-                case CapsuleType.Friendly:
-                    _gameModel.FriendlyUnitsCount++;
-                    break;
-                
-                case CapsuleType.Enemy:
-                    _gameModel.EnemyUnitsCount++;
-                    break;
-            }
-            
-            Debug.Log("UnitSpawned");
-            _gameUIManager.UpdateStatistics(_gameModel);
-        }
+        _gameUI.UpdateStatistics(_gameModel);
         
-        private void OnUnitDied(CapsuleController capsuleController)
-        {
-            CapsuleType type = capsuleController.CapsuleType;
-            switch (type)
-            {
-                case CapsuleType.Friendly:
-                    _gameModel.FriendlyUnitsDead++;
-                    _gameModel.FriendlyUnitsCount--;
-                    break;
-                
-                case CapsuleType.Enemy:
-                    _gameModel.EnemyUnitsDead++;
-                    _gameModel.EnemyUnitsCount--;
-                    break;
-                
-                default:
-                    Debug.LogError("Unknown capsule type");
-                    break;
-            }
-            
-            Debug.Log("UnitDied");
-            _gameUIManager.UpdateStatistics(_gameModel);
-        }
+        // Удаляем
+        _spawnService.DestroyCapsule(capsuleController);
+    }
+
+    private void OnCapsuleCollided(CapsuleController c1, CapsuleController c2)
+    {
+        _eventManager.OnUnitDie.Invoke(c1);
+        _eventManager.OnUnitDie.Invoke(c2);
     }
 }

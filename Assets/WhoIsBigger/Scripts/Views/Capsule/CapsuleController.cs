@@ -2,23 +2,22 @@
 using ProjectDawn.Navigation.Hybrid;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Serialization;
 using WhoIsBigger.Scripts.Common;
 using WhoIsBigger.Scripts.Models;
-using WhoIsBigger.Scripts.Services;
+using WhoIsBigger.Scripts.Services.CapsuleService;
 using Zenject;
 
 namespace WhoIsBigger.Scripts.Views.Capsule
 {
     public class CapsuleController : MonoBehaviour
     {
-        
-        private CapsuleType _capsuleType;
-        
         [Inject] private EventManager _eventManager;
+        [Inject] private ICapsuleService _capsuleService;
+        
         private AgentAuthoring _agent;
         private string _tagToChase;
         
+        private CapsuleType _capsuleType;
         public CapsuleType CapsuleType => _capsuleType;
         
         // Construct вызывается вручную в CapsuleFactory
@@ -39,15 +38,16 @@ namespace WhoIsBigger.Scripts.Views.Capsule
 
         private void Start()
         {
-            // Регистрируем капсулу в реестре в зависимости от её типа
+            // Регистрируем капсулу 
+            _capsuleService.RegisterCapsule(this);
+            
+            // Устанавливаем тег для преследования
             if (_capsuleType == CapsuleType.Friendly)
             {
-                CapsuleRegistry.FriendlyCapsules.Add(this);
                 _tagToChase = CapsuleTag.Enemy;
             }
             else if (_capsuleType == CapsuleType.Enemy)
             {
-                CapsuleRegistry.EnemyCapsules.Add(this);
                 _tagToChase = CapsuleTag.Friendly;
             }
             else
@@ -57,20 +57,12 @@ namespace WhoIsBigger.Scripts.Views.Capsule
             Debug.Log("Chasing " + _tagToChase);
         }
 
-        private void OnDestroy()
-        {
-            if (_capsuleType == CapsuleType.Friendly)
-                CapsuleRegistry.FriendlyCapsules.Remove(this);
-            else if (_capsuleType == CapsuleType.Enemy)
-                CapsuleRegistry.EnemyCapsules.Remove(this);
-        }
-
         private void Update()
         {
             if (_agent == null)
                 return;
             
-            var target = FindNearestTarget();
+            var target = _capsuleService.FindNearestTarget(_capsuleType, transform.position);
             if (target != null)
             {
                 _agent.SetDestination(target.transform.position );
@@ -81,38 +73,25 @@ namespace WhoIsBigger.Scripts.Views.Capsule
             }               
         }
         
-        private GameObject FindNearestTarget()
-        {
-            var targetList = _capsuleType == CapsuleType.Friendly 
-                ? CapsuleRegistry.EnemyCapsules 
-                : CapsuleRegistry.FriendlyCapsules;
-    
-            var validTargets = targetList.Where(c => c != null && c.gameObject.activeInHierarchy).ToList();
-            if (validTargets.Count == 0)
-                return null;
-
-            CapsuleController nearest = validTargets
-                .OrderBy(c => Vector3.Distance(transform.position, c.transform.position))
-                .First();
-            return nearest.gameObject;
-        }
-        
         public void HandleFight(Collider collider)
         {
             var otherCapsule = collider.GetComponentInParent<CapsuleController>();
             if(otherCapsule == null)
             {
-                Debug.LogWarning("Другой объект не имеет CapsuleController");
+                Debug.LogWarning("No CapsuleController found on " + collider.name);
                 return;
             }
             
             // Убираем задваивание
             if (this.GetInstanceID() < otherCapsule.GetInstanceID())
             {
-                _eventManager.OnUnitDie.Invoke(this);
-                _eventManager.OnUnitDie.Invoke(otherCapsule);
+                _eventManager.OnCapsuleCollide.Invoke(this, otherCapsule);
             }
         }
-
+        
+        private void OnDestroy()
+        {
+            _capsuleService.UnregisterCapsule(this);
+        }
     }
 }
